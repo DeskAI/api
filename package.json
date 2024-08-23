@@ -1,0 +1,14 @@
+{
+  "name": "@deskai/api",
+  "version": "1.0.0",
+  "description": "Type definitions for the latest DeskAI API (https://deskai.app)",
+  "homepage": "https://deskai.app",
+  "types": "deskai.d.ts",
+  "license": "MIT",
+  "peerDependencies": {
+    "rxjs": "7.8.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
