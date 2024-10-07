@@ -1,28 +1,3 @@
-import { Observable } from "rxjs";
-
-export interface Debugger {
-  sendCommand: (command: string, args: any) => void;
-}
-
-export interface RPAOptions {
-  [key: string]: any;
-}
-
-export class RPA {
-  name: string;
-  debugger: Debugger;
-
-  constructor(name: string, url: string, options: RPAOptions);
-
-  executeJavaScript(code: string, userGesture: boolean): void;
-
-  insertText(text: string): void;
-
-  handleMessage(method: string, params: any): void;
-
-  destroy(): void;
-}
-
 export interface GPTTool {
   type: "function";
   function: {
@@ -73,12 +48,13 @@ export type message = {
       tool_call_id: string;
     }
 );
-export interface ILLMEngine {
+export interface ILLMEngineProvider {
   name: string;
   description: string;
   icon: string;
   configSchema: Record<string, any>;
   defaultConfig: Record<string, any>;
+  currentModel: string;
   onMount?(): void;
   onUnmount?(): void;
 
@@ -86,15 +62,90 @@ export interface ILLMEngine {
 
   setConfig(key: string, value: any): void;
 
-  chat(content: message[], tools?: GPTTool[]): Promise<Observable<any>>;
+  chat(content: message[], tools?: GPTTool[]): Promise<Response>;
+}
+
+export interface IEmbeddingProvider {
+  name: string;
+  description: string;
+  icon: string;
+  configSchema: Record<string, any>;
+  defaultConfig: Record<string, any>;
+  currentModel: string;
+  loadConfig(config: any): any;
+
+  setConfig(key: string, value: any): void;
+
+  embed(input: string, options?: GPTTool[]): Promise<Response>;
+}
+
+export interface ITool {
+  name: string;
+  description: string;
+  icon: string;
+  schema: Record<string, any>;
+  func(parameters: any): Promise<any>;
+}
+
+export class Locator {
+  clic(options?: any): Promise<void>;
+
+  outerHTML(options?: { timeout?: number }): Promise<string>;
+
+  innerText(options?: { timeout?: number }): Promise<string>;
+
+  innerHTML(options?: { timeout?: number }): Promise<string>;
+}
+
+export class Page {
+  goto(
+    url: string,
+    options?: {
+      referer?: string;
+      timeout?: number;
+      waitUntil?: "load" | "domcontentloaded" | "networkidle" | "commit";
+    }
+  ): Promise<null | Response>;
+
+  evaluate<T = any>(
+    pageFunction: string | ((...args: any[]) => T | Promise<T>),
+    ...args: any[]
+  ): Promise<T>;
+
+  addInitScript(
+    script: Function | string | { path?: string; content?: string },
+    arg?: any
+  ): Promise<void>;
+
+  getByAltText(
+    text: string | RegExp,
+    options?: { exact?: boolean }
+  ): Promise<Locator>;
+
+  locator(
+    selector: string,
+    options?: {
+      has?: Locator;
+      hasText?: string | RegExp;
+      hasNot?: Locator;
+      hasNotText?: string | RegExp;
+    }
+  ): Locator;
+}
+
+export class BrowserContext {
+  pages: Page[];
+  newPage(): Page;
+  close(): void;
 }
 
 export interface ILLM {
-  addEngine(engine: ILLMEngine): void;
+  addLLMProvider(engine: ILLMEngineProvider): void;
   use(name: string): void;
-  addTool(tool: any): void;
+  addEmbeddingProvider(embeddingProvider: IEmbeddingProvider): void;
+  addTool(tool: ITool): void;
 }
-export const LLM: ILLM
+export const LLM: ILLM;
 
 export interface Shortcuts {
   register(accelerator: string, callback: () => void): void;
