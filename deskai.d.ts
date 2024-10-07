@@ -133,7 +133,12 @@ export class Page {
   ): Locator;
 }
 
+export type CreateBrowserContextOptions = {
+  headless: boolean;
+}
+
 export class BrowserContext {
+  constructor(options?: CreateBrowserContextOptions);
   pages: Page[];
   newPage(): Page;
   close(): void;
