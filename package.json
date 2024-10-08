@@ -1,6 +1,6 @@
 {
   "name": "@deskai/api",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Type definitions for the latest DeskAI API (https://deskai.app)",
   "homepage": "https://deskai.app",
   "types": "deskai.d.ts",

@@ -48,6 +48,12 @@ export type message = {
       tool_call_id: string;
     }
 );
+
+export interface IModel {
+  label: string;
+  value: string;
+}
+
 export interface ILLMEngineProvider {
   name: string;
   description: string;
@@ -62,7 +68,9 @@ export interface ILLMEngineProvider {
 
   setConfig(key: string, value: any): void;
 
-  chat(content: message[], tools?: GPTTool[]): Promise<Response>;
+  getModels(): Promise<IModel>;
+
+  chat(content: message[], tools?: Record<string, any>): Promise<Response>;
 }
 
 export interface IEmbeddingProvider {
@@ -76,7 +84,9 @@ export interface IEmbeddingProvider {
 
   setConfig(key: string, value: any): void;
 
-  embed(input: string, options?: GPTTool[]): Promise<Response>;
+  getModels(): Promise<IModel>;
+
+  embed(input: string, options?: Record<string, any>): Promise<Response>;
 }
 
 export interface ITool {
@@ -84,7 +94,11 @@ export interface ITool {
   description: string;
   icon: string;
   schema: Record<string, any>;
+  configSchema?: Record<string, any>;
+  defaultConfig?: Record<string, any>;
   func(parameters: any): Promise<any>;
+  loadConfig?(config: any): any;
+  setConfig?(key: string, value: any): void;
 }
 
 export class Locator {
